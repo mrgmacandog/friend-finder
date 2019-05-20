@@ -11,6 +11,13 @@
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
 
     <title>Friend Finder</title>
 </head>
@@ -198,8 +205,10 @@
 
         <hr>
 
-        <a href="/api/friends">API Friends List</a> | <a href="https://github.com/mrgmacandog/friend-finder">GitHub Repo</a>
+        <a href="/api/friends">API Friends List</a> | <a href="https://github.com/mrgmacandog/friend-finder">GitHub
+            Repo</a>
     </div>
+
 
     <script type="text/javascript">
         $("#submit").on("click", function () {
@@ -219,28 +228,83 @@
             let question9Input = $("#question9").val();
             let question10Input = $("#question10").val();
 
+            // TODO refactor
+            let newFriendScores = [
+                question1Input,
+                question2Input,
+                question3Input,
+                question4Input,
+                question5Input,
+                question6Input,
+                question7Input,
+                question8Input,
+                question9Input,
+                question10Input
+            ];
+
+            // TODO refactor
             // If any of the inputs is incorrect
-            if (nameInput === "" ||
-                urlPhotoInput === "" ||
-                question1Input === "Chooose..." ||
-                question2Input === "Chooose..." ||
-                question3Input === "Chooose..." ||
-                question4Input === "Chooose..." ||
-                question5Input === "Chooose..." ||
-                question6Input === "Chooose..." ||
-                question7Input === "Chooose..." ||
-                question8Input === "Chooose..." ||
-                question9Input === "Chooose..." ||
-                question10Input === "Chooose..."
-                ) {
+            if (nameInput === "" || urlPhotoInput === "" || question1Input === "Chooose..." ||
+                question2Input === "Chooose..." || question3Input === "Chooose..." ||
+                question4Input === "Chooose..." || question5Input === "Chooose..." ||
+                question6Input === "Chooose..." || question7Input === "Chooose..." ||
+                question8Input === "Chooose..." || question9Input === "Chooose..." ||
+                question10Input === "Chooose...") {
+
                 // Warn user
                 alert("Please fill out all fields before submitting!");
+
             } else {
-                // Add user info data
+                // Create object for the new friend to put into the "database"
+                let newFriend = {
+                    "name": nameInput,
+                    "photo": urlPhotoInput,
+                    "scores": newFriendScores
+                }
 
                 // Display match
+                findMatch(newFriend);
             }
         });
+
+        // Find the best match for the new friend
+        function findMatch(newFriend) {
+            $.get("api/friends")
+                .then(function (data) {
+                    let matchDiff = 40;  // With 10 questions, the greatest difference is 40
+                    let matchName = "Sorry, you are the first person to submit the form."
+                    let matchPhoto = "";
+
+                    // Loop through each person
+                    for (let i = 0; i < data.length; i++) {
+                        let currFriend = data[i];
+                        let currFriendDiff = 0;
+
+                        // Loop through each question
+                        for (let question = 0; question < currFriend.scores.length; question++) {
+                            // Add up the difference in scores
+                            currFriendDiff += Math.abs(currFriend.scores[question] - newFriend.scores[question]);
+                        }
+
+                        // If the curr friend's score difference is less than the match difference, update match values
+                        if (currFriendDiff < matchDiff) {
+                            matchDiff = currFriendDiff;
+                            matchName = currFriend.name;
+                            matchPhoto = currFriend.photo;
+                        }
+                    }
+
+                    console.log(matchDiff);
+                    console.log(matchName);
+                    console.log(matchPhoto);
+
+                    // Add new friend data to "database"
+                    $.post("api/friends", newFriend)
+                        .then(function (data) {
+                            console.log("Adding new friend info");
+                        });
+                })
+        }
     </script>
 </body>
 
