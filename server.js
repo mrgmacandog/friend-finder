@@ -1,6 +1,7 @@
 // Dependecies
 const path = require("path");
 const express = require("express");
+const friends = require("./app/data/friends");
 
 // Sets up the Express App
 var app = express();
@@ -21,12 +22,27 @@ app.get("/", function (req, res) {
 app.get("/survey", function (req, res) {
     res.sendFile(path.join(__dirname, "app/public/survey.html"));
 });
+// ==============================================================
 
-// Redirect all other routes to the home page
-app.get('*',function (req, res) {
-    res.redirect('/');
+// TODO move api routes to apiRoutes.js
+// ==============================================================
+// Set route for getting friends data
+app.get("/api/friends", function (req, res) {
+    res.json(friends);
+});
+
+app.post("/api/friends", function (req, res) {
+    let friend = req.body;
+    friends.push(friend);
+
+    res.status(200);
 });
 // ==============================================================
+
+// Redirect all other routes to the home page
+app.get('*', function (req, res) {
+    res.redirect('/');
+});
 
 // Starts the server to begin listening
 app.listen(PORT, function () {
