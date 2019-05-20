@@ -2,9 +2,10 @@
   "name": "friend-finder",
   "version": "1.0.0",
   "description": "Web application that finds the person you are most compatible with.",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,6 @@
   },
   "homepage": "https://github.com/mrgmacandog/friend-finder#readme",
   "dependencies": {
-    "express": "^4.17.0",
-    "path": "^0.12.7"
+    "express": "^4.17.0"
   }
 }
