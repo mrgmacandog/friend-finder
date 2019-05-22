@@ -1,14 +1,22 @@
-function HTMLRoutes(app) {
-    this.addRoutes = function () {
-        app.get("/", function (req, res) {
-            res.sendFile(path.join(__dirname, "../public/home.html"));
-        });
+// Dependecies
+const path = require("path");
+const express = require('express');
+const router = express.Router();
 
-        // Set route for survey page
-        app.get("/survey", function (req, res) {
-            res.sendFile(path.join(__dirname, "../public/survey.html"));
-        });
-    }
-}
+// Send user home.html at root
+router.get("/", function (req, res) {
+    res.sendFile(path.join(__dirname, "../public/home.html"));
+});
 
-module.exports = HTMLRoutes;
+// Send user survey.html at /survey
+router.get("/survey", function (req, res) {
+    res.sendFile(path.join(__dirname, "../public/survey.html"));
+});
+
+// Redirect user to root at any other route
+router.get('*', function (req, res) {
+    res.redirect('/');
+});
+
+// Export the router with the routes
+module.exports = router;

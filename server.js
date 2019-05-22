@@ -1,9 +1,9 @@
 // Dependecies
-const path = require("path");
+// const path = require("path");
 const express = require("express");
-const friends = require("./app/data/friends");
-const APIRoutes = require("./app/routing/apiRoutes.js");
-const HTMLRoutes = require("./app/routing/htmlRoutes.js")
+// const friends = require("./app/data/friends");
+const apiRoutes = require("./app/routing/apiRoutes");
+const htmlRoutes = require("./app/routing/htmlRoutes")
 
 // Sets up the Express App
 var app = express();
@@ -13,40 +13,11 @@ var PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// TODO move html routes to htmlRoutes.js
-// ==============================================================
-// Set route for home page
-// app.get("/", function (req, res) {
-//     res.sendFile(path.join(__dirname, "app/public/home.html"));
-// });
+// Use API Routes
+app.use("/api", apiRoutes);
 
-// // Set route for survey page
-// app.get("/survey", function (req, res) {
-//     res.sendFile(path.join(__dirname, "app/public/survey.html"));
-// });
-// ==============================================================
-APIRoutes.addRoutes(app, friends);
-
-// TODO move api routes to apiRoutes.js
-// ==============================================================
-// Set route for getting friends data
-// app.get("/api/friends", function (req, res) {
-//     res.json(friends);
-// });
-
-// app.post("/api/friends", function (req, res) {
-//     let friend = req.body;
-//     friends.push(friend);
-
-//     res.status(200);
-// });
-// ==============================================================
-HTMLRoutes.addRoutes(app);
-
-// Redirect all other routes to the home page
-app.get('*', function (req, res) {
-    res.redirect('/');
-});
+// Use HTML Routes
+app.use("/", htmlRoutes);
 
 // Starts the server to begin listening
 app.listen(PORT, function () {
